@@ -1,16 +1,16 @@
-import React from 'react'
+import { authModalState } from '@/atoms/authModalAtom'
 import {
-  Button,
-  Modal,
+  Flex,
   ModalBody,
   ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay
+  ModalHeader
 } from '@chakra-ui/react'
+import React from 'react'
 import { useRecoilState } from 'recoil'
-import { authModalState } from '@/atoms/authModalAtom'
+import ModalWrapper from '../modalWrapper'
+import AuthInputs from './inputs'
+import OAuthButtons from './oAuthButtons'
+import ResetPassword from './resetPassword'
 
 const AuthModal: React.FC = () => {
   const [modalState, setModalState] = useRecoilState(authModalState)
@@ -19,24 +19,40 @@ const AuthModal: React.FC = () => {
       ...prev,
       open: false
     }))
-  return (
-    <>
-      <Modal isOpen={modalState.open} onClose={handleClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Modal Title</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>here is modal body</ModalBody>
 
-          <ModalFooter>
-            <Button colorScheme='blue' mr={3} onClick={handleClose}>
-              Close
-            </Button>
-            <Button variant='ghost'>Secondary Action</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </>
+  return (
+    <ModalWrapper isOpen={modalState.open} onClose={handleClose}>
+      <ModalHeader display='flex' flexDirection='column' alignItems='center'>
+        {modalState.view === 'login' && 'Login'}
+        {modalState.view === 'signup' && 'Sign Up'}
+        {modalState.view === 'resetPassword' && 'Reset Password'}
+      </ModalHeader>
+      <ModalCloseButton />
+      <ModalBody
+        display='flex'
+        flexDirection='column'
+        alignItems='center'
+        justifyContent='center'
+        pb={6}
+      >
+        <Flex
+          direction='column'
+          alignItems='center'
+          justifyContent='center'
+          width='70%'
+        >
+          {modalState.view === 'login' || modalState.view === 'signup' ? (
+            <>
+              <OAuthButtons />
+              OR
+              <AuthInputs />
+            </>
+          ) : (
+            <ResetPassword />
+          )}
+        </Flex>
+      </ModalBody>
+    </ModalWrapper>
   )
 }
 export default AuthModal
