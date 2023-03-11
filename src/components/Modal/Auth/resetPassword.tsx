@@ -2,15 +2,23 @@ import { Button, Flex, Icon, Input, Text } from '@chakra-ui/react'
 import React, { useState } from 'react'
 import { BsDot, BsReddit } from 'react-icons/bs'
 import { useSetRecoilState } from 'recoil'
-import { authModalState, ModalView } from '../../../atoms/authModalAtom'
+import { authModalState, ModalView } from '@/atoms/authModalAtom'
+import { useSendPasswordResetEmail } from 'react-firebase-hooks/auth'
+import { auth } from '@/firebase/clientApp'
 
 const ResetPassword: React.FC = () => {
   const setAuthModalState = useSetRecoilState(authModalState)
   const [email, setEmail] = useState('')
   const [success, setSuccess] = useState(false)
+  const [sendPasswordResetEmail, sending, error] =
+    useSendPasswordResetEmail(auth)
 
-  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {}
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
 
+    await sendPasswordResetEmail(email)
+    setSuccess(true)
+  }
   const toggleView = (view: ModalView) => {
     setAuthModalState((prev) => ({
       ...prev,
@@ -54,16 +62,16 @@ const ResetPassword: React.FC = () => {
               }}
               bg='gray.50'
             />
-            {/* <Text textAlign="center" fontSize="10pt" color="red">
+            <Text textAlign='center' fontSize='10pt' color='red'>
               {error?.message}
-            </Text> */}
+            </Text>
             <Button
               width='100%'
               height='36px'
               mb={2}
               mt={2}
               type='submit'
-              //   isLoading={sending}
+              isLoading={sending}
             >
               Reset Password
             </Button>
