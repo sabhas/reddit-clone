@@ -3,6 +3,9 @@ import React, { useState } from 'react'
 import { useSetRecoilState } from 'recoil'
 import { authModalState, ModalView } from '../../../atoms/authModalAtom'
 import InputItem from '../../Layout/inputItem'
+import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth'
+import { auth } from '../../../firebase/clientApp'
+import { FIREBASE_ERRORS } from '../../../firebase/errors'
 
 const Login: React.FC = () => {
   const setAuthModalState = useSetRecoilState(authModalState)
@@ -11,8 +14,21 @@ const Login: React.FC = () => {
     email: '',
     password: ''
   })
+  const [formError, setFormError] = useState('')
 
-  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {}
+  const [signInWithEmailAndPassword, _, loading, authError] =
+    useSignInWithEmailAndPassword(auth)
+
+  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    if (formError) setFormError('')
+    if (!form.email.includes('@')) {
+      return setFormError('Please enter a valid email')
+    }
+
+    // Valid form inputs
+    signInWithEmailAndPassword(form.email, form.password)
+  }
 
   const onChange = ({
     target: { name, value }
@@ -45,7 +61,18 @@ const Login: React.FC = () => {
         type='password'
         onChange={onChange}
       />
-      <Button width='100%' height='36px' mb={2} mt={2} type='submit'>
+      <Text textAlign='center' mt={2} fontSize='10pt' color='red'>
+        {formError ||
+          FIREBASE_ERRORS[authError?.message as keyof typeof FIREBASE_ERRORS]}
+      </Text>
+      <Button
+        width='100%'
+        height='36px'
+        mb={2}
+        mt={2}
+        type='submit'
+        isLoading={loading}
+      >
         Log In
       </Button>
       <Flex justifyContent='center' mb={2}>
