@@ -29,7 +29,7 @@ const Navbar: React.FC = () => {
           height='46px'
         />
       </Flex>
-      <SearchInput />
+      <SearchInput user={user} />
       <RightContent user={user} />
     </Flex>
   )
