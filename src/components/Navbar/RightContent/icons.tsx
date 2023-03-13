@@ -7,8 +7,10 @@ import {
   IoNotificationsOutline,
   IoVideocamOutline
 } from 'react-icons/io5'
+import useDirectory from '../../../hooks/useDirectory'
 
 const ActionIcons: React.FC = () => {
+  const { toggleMenuOpen } = useDirectory()
   return (
     <Flex alignItems='center' flexGrow={1}>
       <Box
@@ -77,7 +79,7 @@ const ActionIcons: React.FC = () => {
           cursor='pointer'
           borderRadius={4}
           _hover={{ bg: 'gray.200' }}
-          // onClick={toggleMenuOpen}
+          onClick={toggleMenuOpen}
         >
           <Icon as={GrAdd} fontSize={20} />
         </Flex>
